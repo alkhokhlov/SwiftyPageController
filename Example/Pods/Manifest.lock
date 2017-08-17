@@ -1,0 +1,16 @@
+PODS:
+  - SwiftyPageController (0.1.0)
+
+DEPENDENCIES:
+  - SwiftyPageController (from `../`)
+
+EXTERNAL SOURCES:
+  SwiftyPageController:
+    :path: "../"
+
+SPEC CHECKSUMS:
+  SwiftyPageController: d9cbe10377df7d506f114a762ce138ca7c01d24b
+
+PODFILE CHECKSUM: 6cf86b7e8f085b125780d992e0ab9f2efc1dc7c4
+
+COCOAPODS: 1.2.1

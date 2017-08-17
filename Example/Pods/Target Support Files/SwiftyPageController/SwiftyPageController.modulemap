@@ -1,0 +1,6 @@
+framework module SwiftyPageController {
+  umbrella header "SwiftyPageController-umbrella.h"
+
+  export *
+  module * { export * }
+}

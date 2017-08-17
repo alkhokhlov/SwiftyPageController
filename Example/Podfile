@@ -1,0 +1,7 @@
+use_frameworks!
+
+target 'SwiftyPageController_Example' do
+
+  pod 'SwiftyPageController', :path => '../'
+
+end
