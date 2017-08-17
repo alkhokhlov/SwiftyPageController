@@ -14,13 +14,27 @@ public protocol SwiftyPageControllerDelegate: class {
     
     func swiftyPageController(_ controller: SwiftyPageController, didMoveToController toController: UIViewController)
     
+    func swiftyPageController(_ controller: SwiftyPageController, alongSideTransitionToController toController: UIViewController)
+    
 }
 
 public protocol SwiftyPageControllerAnimatorProtocol {
     
+    var animationDuration: TimeInterval { get }
+    
     func willAnimate(fromController: UIViewController, toController: UIViewController, animationDirection: SwiftyPageController.AnimationDirection)
     
     func animate(fromController: UIViewController, toController: UIViewController, animationDirection: SwiftyPageController.AnimationDirection)
+    
+    func didFinishAnimation(fromController: UIViewController, toController: UIViewController, animationDirection: SwiftyPageController.AnimationDirection)
+    
+}
+
+extension SwiftyPageControllerAnimatorProtocol {
+    
+    public var animationDuration: TimeInterval {
+        return 0.25
+    }
     
 }
 
@@ -37,9 +51,18 @@ open class SwiftyPageController: UIViewController {
     
     public weak var delegate: SwiftyPageControllerDelegate?
     public private(set) var selectedIndex: Int?
+    public var gestures: [UISwipeGestureRecognizer] = []
     public var isEnabledSwipeAction = true
-    public var animationDuration: TimeInterval = 0.25
     public var animator: SwiftyPageControllerAnimatorProtocol = SwiftyPageControllerAnimator()
+    public var containerPaddings: UIEdgeInsets? {
+        didSet {
+            topContainerConstraint.constant = containerPaddings?.top ?? 0
+            bottompContainerConstraint.constant = -(containerPaddings?.bottom ?? 0.0)
+            leadingContainerConstraint.constant = containerPaddings?.left ?? 0
+            trailingContainerConstraint.constant = -(containerPaddings?.right ?? 0.0)
+            view.setNeedsLayout()
+        }
+    }
     public var selectedController: UIViewController {
         return viewControllers[selectedIndex ?? 0]
     }
@@ -53,6 +76,9 @@ open class SwiftyPageController: UIViewController {
     public var viewControllers: [UIViewController] = [] {
         willSet {
             for viewController in viewControllers {
+                if (viewController.viewIfLoaded != nil) {
+                    viewController.view.removeFromSuperview()
+                }
                 viewController.removeFromParentViewController()
             }
         }
@@ -80,16 +106,23 @@ open class SwiftyPageController: UIViewController {
         setupController()
     }
     
+    open override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        setupContentInsets(in: selectedController)
+    }
+    
     // MARK: - Setup
     
     fileprivate func setupController() {
         let swipeLeftGesture = UISwipeGestureRecognizer(target: self, action: #selector(swipeAction(_:)))
         swipeLeftGesture.direction = .left
         view.addGestureRecognizer(swipeLeftGesture)
+        gestures.append(swipeLeftGesture)
         
         let swipeRightGesture = UISwipeGestureRecognizer(target: self, action: #selector(swipeAction(_:)))
         swipeRightGesture.direction = .right
         view.addGestureRecognizer(swipeRightGesture)
+        gestures.append(swipeRightGesture)
         
         // setup container view
         containerView.translatesAutoresizingMaskIntoConstraints = false
@@ -105,11 +138,7 @@ open class SwiftyPageController: UIViewController {
         bottompContainerConstraint.isActive = true
         view.layoutIfNeeded()
         
-        if selectedIndex != nil {
-            selectFirstController(atIndex: selectedIndex!)
-        } else {
-            selectFirstController(atIndex: 0)
-        }
+        selectFirstController(atIndex: selectedIndex ?? 0)
     }
     
     // MARK: - Actions
@@ -149,9 +178,11 @@ open class SwiftyPageController: UIViewController {
         
         animator.willAnimate(fromController: fromController, toController: toController, animationDirection: animationDirection)
         
-        transition(from: fromController, to: toController, duration: animationDuration, options: .curveEaseInOut, animations: {
+        transition(from: fromController, to: toController, duration: animator.animationDuration, options: .curveEaseInOut, animations: {
+            self.delegate?.swiftyPageController(self, alongSideTransitionToController: toController)
             self.animator.animate(fromController: fromController, toController: toController, animationDirection: animationDirection)
         }) { (finished) in
+            self.animator.didFinishAnimation(fromController: fromController, toController: toController, animationDirection: animationDirection)
             self.containerView.addSubview(toController.view)
             toController.didMove(toParentViewController: self)
             
@@ -212,14 +243,6 @@ open class SwiftyPageController: UIViewController {
                 transitionToIndex(index: index)
             }
         }
-    }
-    
-    public func setContainerPadding(padding: UIEdgeInsets) {
-        topContainerConstraint.constant = padding.top
-        bottompContainerConstraint.constant = -padding.bottom
-        leadingContainerConstraint.constant = padding.left
-        trailingContainerConstraint.constant = -padding.right
-        view.layoutIfNeeded()
     }
     
     func swipeAction(_ sender: UISwipeGestureRecognizer) {

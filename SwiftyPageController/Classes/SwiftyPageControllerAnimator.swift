@@ -25,4 +25,8 @@ open class SwiftyPageControllerAnimator: SwiftyPageControllerAnimatorProtocol {
         fromController.view.alpha = 0.0
     }
     
+    public func didFinishAnimation(fromController: UIViewController, toController: UIViewController, animationDirection: SwiftyPageController.AnimationDirection) {
+        
+    }
+    
 }

@@ -51,6 +51,10 @@ class ViewController: UIViewController {
 
 extension ViewController: SwiftyPageControllerDelegate {
     
+    func swiftyPageController(_ controller: SwiftyPageController, alongSideTransitionToController toController: UIViewController) {
+        
+    }
+    
     func swiftyPageController(_ controller: SwiftyPageController, didMoveToController toController: UIViewController) { }
     
     func swiftyPageController(_ controller: SwiftyPageController, willMoveToController toController: UIViewController) {
