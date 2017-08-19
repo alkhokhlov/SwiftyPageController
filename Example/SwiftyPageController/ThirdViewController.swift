@@ -36,9 +36,7 @@ class ThirdViewController: UIViewController {
             tableView.backgroundView = refreshControl
         }
         
-        tableView.register(UITableViewCell.self, forCellReuseIdentifier: identifier)
-        
-        tableView.reloadData()
+        tableView.register(UITableViewCell.self, forCellReuseIdentifier: identifier)        
     }
 
     override func viewWillAppear(_ animated: Bool) {

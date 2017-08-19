@@ -96,6 +96,7 @@ open class SwiftyPageController: UIViewController {
     
     fileprivate var nextIndex: Int?
     fileprivate var isAnimating = false
+    fileprivate var previousTopLayoutGuideLength: CGFloat!
     fileprivate var containerView = UIView(frame: CGRect.zero)
     fileprivate var leadingContainerConstraint: NSLayoutConstraint!
     fileprivate var trailingContainerConstraint: NSLayoutConstraint!
@@ -143,6 +144,8 @@ open class SwiftyPageController: UIViewController {
         view.layoutIfNeeded()
         
         selectController(atIndex: selectedIndex ?? 0)
+        
+        previousTopLayoutGuideLength = topLayoutGuide.length
     }
     
     // MARK: - Actions
@@ -160,18 +163,17 @@ open class SwiftyPageController: UIViewController {
         if let containerInsets = containerInsets {
             scrollView.contentInset = containerInsets
             scrollView.scrollIndicatorInsets = scrollView.contentInset
-            
-            if scrollView.contentOffset.y < scrollView.contentInset.top {
-                scrollView.contentOffset.y = -scrollView.contentInset.top
-            }
         } else {
             scrollView.contentInset = UIEdgeInsets(top: topLayoutGuide.length, left: 0.0, bottom: bottomLayoutGuide.length, right: 0.0)
             scrollView.scrollIndicatorInsets = scrollView.contentInset
-            
-            if scrollView.contentOffset.y < scrollView.contentInset.top {
-                scrollView.contentOffset.y = -scrollView.contentInset.top
-            }
         }
+        
+        if abs(scrollView.contentOffset.y) == topLayoutGuide.length {
+            previousTopLayoutGuideLength = topLayoutGuide.length
+        }
+        
+        scrollView.contentOffset.y += previousTopLayoutGuideLength - topLayoutGuide.length
+        previousTopLayoutGuideLength = topLayoutGuide.length
     }
     
     fileprivate func transition(fromController: UIViewController, toController: UIViewController, animationDirection: AnimationDirection) {
