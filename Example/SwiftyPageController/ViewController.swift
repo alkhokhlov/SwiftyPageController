@@ -21,7 +21,7 @@ class ViewController: UIViewController {
     }
     
     func segmentControlDidChange(_ sender: UISegmentedControl) {
-        containerController.selectController(atIndex: sender.selectedSegmentIndex)
+        containerController.selectController(atIndex: sender.selectedSegmentIndex, animated: true)
     }
     
     func setupContainerController(_ controller: SwiftyPageController) {
@@ -34,9 +34,16 @@ class ViewController: UIViewController {
         let thirdController = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "\(ThirdViewController.self)")
         containerController.viewControllers = [firstController, secondController, thirdController]
         
-        containerController.selectController(atIndex: 0)
+        containerController.selectController(atIndex: 0, animated: false)
     }
 
+    @IBAction func shuffleButtonDidTap(_ sender: Any) {
+        let firstController = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "\(FirstViewController.self)")
+        let secondController = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "\(SecondViewController.self)")
+        let thirdController = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "\(ThirdViewController.self)")
+        containerController.viewControllers = [firstController, secondController, thirdController].shuffled()
+    }
+    
     // MARK: - Navigation
 
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {

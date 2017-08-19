@@ -53,6 +53,7 @@ open class SwiftyPageController: UIViewController {
     public private(set) var selectedIndex: Int?
     public var gestures: [UISwipeGestureRecognizer] = []
     public var isEnabledSwipeAction = true
+    public var isEnabledAnimation = true
     public var animator: SwiftyPageControllerAnimatorProtocol = SwiftyPageControllerAnimator()
     public var containerPaddings: UIEdgeInsets? {
         didSet {
@@ -86,6 +87,9 @@ open class SwiftyPageController: UIViewController {
         didSet {
             for viewController in viewControllers {
                 addChildViewController(viewController)
+            }
+            if viewIfLoaded != nil {
+                selectController(atIndex: viewControllers.index(of: selectedController)!, animated: false)
             }
         }
     }
@@ -138,29 +142,34 @@ open class SwiftyPageController: UIViewController {
         bottompContainerConstraint.isActive = true
         view.layoutIfNeeded()
         
-        selectFirstController(atIndex: selectedIndex ?? 0)
+        selectController(atIndex: selectedIndex ?? 0)
     }
     
     // MARK: - Actions
     
     fileprivate func setupContentInsets(in controller: UIViewController) {
+        if let scrollView = controller.view.subviews.first as? UIScrollView, controller.automaticallyAdjustsScrollViewInsets {
+            customAdjustScrollViewInsets(in: scrollView)
+        }
+        if let scrollView = controller.view as? UIScrollView, controller.automaticallyAdjustsScrollViewInsets {
+            customAdjustScrollViewInsets(in: scrollView)
+        }
+    }
+    
+    fileprivate func customAdjustScrollViewInsets(in scrollView: UIScrollView) {
         if let containerInsets = containerInsets {
-            if let scrollView = controller.view.subviews.first as? UIScrollView {
-                scrollView.contentInset = containerInsets
-                scrollView.scrollIndicatorInsets = scrollView.contentInset
-            }
-            if let scrollView = controller.view as? UIScrollView {
-                scrollView.contentInset = containerInsets
-                scrollView.scrollIndicatorInsets = scrollView.contentInset
+            scrollView.contentInset = containerInsets
+            scrollView.scrollIndicatorInsets = scrollView.contentInset
+            
+            if scrollView.contentOffset.y < scrollView.contentInset.top {
+                scrollView.contentOffset.y = -scrollView.contentInset.top
             }
         } else {
-            if let scrollView = controller.view.subviews.first as? UIScrollView, controller.automaticallyAdjustsScrollViewInsets {
-                scrollView.contentInset = UIEdgeInsets(top: topLayoutGuide.length, left: 0.0, bottom: bottomLayoutGuide.length, right: 0.0)
-                scrollView.scrollIndicatorInsets = scrollView.contentInset
-            }
-            if let scrollView = controller.view as? UIScrollView, controller.automaticallyAdjustsScrollViewInsets {
-                scrollView.contentInset = UIEdgeInsets(top: topLayoutGuide.length, left: 0.0, bottom: bottomLayoutGuide.length, right: 0.0)
-                scrollView.scrollIndicatorInsets = scrollView.contentInset
+            scrollView.contentInset = UIEdgeInsets(top: topLayoutGuide.length, left: 0.0, bottom: bottomLayoutGuide.length, right: 0.0)
+            scrollView.scrollIndicatorInsets = scrollView.contentInset
+            
+            if scrollView.contentOffset.y < scrollView.contentInset.top {
+                scrollView.contentOffset.y = -scrollView.contentInset.top
             }
         }
     }
@@ -212,7 +221,7 @@ open class SwiftyPageController: UIViewController {
         transition(fromController: self.viewControllers[selectedIndex!], toController: newController, animationDirection: direction)
     }
     
-    fileprivate func selectFirstController(atIndex index: Int) {
+    fileprivate func selectController(atIndex index: Int) {
         selectedIndex = index
         
         if !isViewLoaded {
@@ -227,20 +236,28 @@ open class SwiftyPageController: UIViewController {
         
         setupContentInsets(in: controller)
         
+        self.delegate?.swiftyPageController(self, willMoveToController: controller)
+        
         containerView.addSubview(controller.view)
         controller.didMove(toParentViewController: self)
+        
+        self.delegate?.swiftyPageController(self, didMoveToController: controller)
     }
     
-    public func selectController(atIndex index: Int) {
+    public func selectController(atIndex index: Int, animated: Bool) {
         assert(viewControllers.count != 0, "Array 'viewControllers' count couldn't be 0")
         
         if selectedIndex == nil {
-            selectFirstController(atIndex: index)
+            selectController(atIndex: index)
         } else {
-            if isAnimating {
-                nextIndex = index
+            if animated && isEnabledAnimation {
+                if isAnimating {
+                    nextIndex = index
+                } else {
+                    transitionToIndex(index: index)
+                }
             } else {
-                transitionToIndex(index: index)
+                selectController(atIndex: index)
             }
         }
     }
@@ -250,12 +267,12 @@ open class SwiftyPageController: UIViewController {
             if sender.direction == .right {
                 let index = selectedIndex! - 1
                 if index >= 0 {
-                    selectController(atIndex: index)
+                    selectController(atIndex: index, animated: isEnabledAnimation)
                 }
             } else if sender.direction == .left {
                 let index = selectedIndex! + 1
                 if index <= viewControllers.count - 1 {
-                    selectController(atIndex: index)
+                    selectController(atIndex: index, animated: isEnabledAnimation)
                 }
             }
         }

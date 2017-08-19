@@ -14,6 +14,9 @@ class ThirdViewController: UIViewController {
     
     @IBOutlet weak var tableView: UITableView!
     
+    let refreshControl = UIRefreshControl()
+    let searchController: UISearchController = UISearchController(searchResultsController: nil)
+    
     var items: [Int] = []
 
     override func viewDidLoad() {
@@ -23,7 +26,19 @@ class ThirdViewController: UIViewController {
         for i in 0...100 {
             items.append(i)
         }
+        searchController.hidesNavigationBarDuringPresentation = true
+        tableView.tableHeaderView = searchController.searchBar
+        
+        refreshControl.addTarget(self, action: #selector(refresh(_:)), for: .valueChanged)
+        if #available(iOS 10.0, *) {
+            tableView.refreshControl = refreshControl
+        } else {
+            tableView.backgroundView = refreshControl
+        }
+        
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: identifier)
+        
+        tableView.reloadData()
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -44,6 +59,12 @@ class ThirdViewController: UIViewController {
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         print("\(ThirdViewController.self) view did disappear")
+    }
+    
+    func refresh(_ sender: UIRefreshControl) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) { 
+            self.refreshControl.endRefreshing()
+        }
     }
 
     /*

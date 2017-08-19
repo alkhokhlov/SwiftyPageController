@@ -47,6 +47,11 @@
                                 <segment title="Third"/>
                             </segments>
                         </segmentedControl>
+                        <barButtonItem key="rightBarButtonItem" title="Shuffle" id="19q-Jl-etG">
+                            <connections>
+                                <action selector="shuffleButtonDidTap:" destination="mG9-qU-q5f" id="UDW-jd-98L"/>
+                            </connections>
+                        </barButtonItem>
                     </navigationItem>
                     <connections>
                         <outlet property="segmentControl" destination="hd5-y3-a9J" id="4YK-he-YF4"/>
