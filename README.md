@@ -5,6 +5,27 @@
 [![License](https://img.shields.io/cocoapods/l/SwiftyPageController.svg?style=flat)](http://cocoapods.org/pods/SwiftyPageController)
 [![Platform](https://img.shields.io/cocoapods/p/SwiftyPageController.svg?style=flat)](http://cocoapods.org/pods/SwiftyPageController)
 
+## Description
+
+**SwiftyPageController** will be helpful to use in many pages controller.
+
+Advantages:
+ - **customizable** animation transition;
+ - **customizable** selecting buttons (you can implement them by your own)
+
+## How to use
+
+ - Add contanier view from storyboard or programmatically
+ - Choose class for conatiner controller "SwiftyPageController"
+ - In ViewController where you added container controller implement delegate from "SwiftyPageController"
+ - Setup viewController
+ - For selecting needed tab user method 
+
+ ```swift
+ func selectController(atIndex index: Int, animated: Bool)
+```
+
+
 ## Example
 
 To run the example project, clone the repo, and run `pod install` from the Example directory first.
@@ -22,7 +43,7 @@ pod "SwiftyPageController"
 
 ## Author
 
-alkhokhlov, khokhlo.alexander.cr@gmail.com
+alkhokhlov, alkhokhlovv@gmail.com
 
 ## License
 
