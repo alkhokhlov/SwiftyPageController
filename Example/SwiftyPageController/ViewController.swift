@@ -27,6 +27,8 @@ class ViewController: UIViewController {
     func setupContainerController(_ controller: SwiftyPageController) {
         containerController = controller
         
+        containerController.isEnabledSwipeAction = false
+        
         containerController.delegate = self
         
         let firstController = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "\(FirstViewController.self)")
@@ -62,10 +64,12 @@ extension ViewController: SwiftyPageControllerDelegate {
         
     }
     
-    func swiftyPageController(_ controller: SwiftyPageController, didMoveToController toController: UIViewController) { }
+    func swiftyPageController(_ controller: SwiftyPageController, didMoveToController toController: UIViewController) {
+        segmentControl.selectedSegmentIndex = containerController.viewControllers.index(of: toController)!
+    }
     
     func swiftyPageController(_ controller: SwiftyPageController, willMoveToController toController: UIViewController) {
-        segmentControl.selectedSegmentIndex = containerController.viewControllers.index(of: toController)!
+        
     }
     
 }
