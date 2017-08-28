@@ -85,9 +85,6 @@ open class SwiftyPageController: UIViewController {
         }
         
         didSet {
-            for viewController in viewControllers {
-                addChildViewController(viewController)
-            }
             if viewIfLoaded != nil {
                 selectController(atIndex: viewControllers.index(of: selectedController)!, animated: false)
             }
@@ -143,7 +140,7 @@ open class SwiftyPageController: UIViewController {
         bottompContainerConstraint.isActive = true
         view.layoutIfNeeded()
         
-        selectController(atIndex: selectedIndex ?? 0)
+        selectController(atIndex: selectedIndex ?? 0, animated: false)
         
         previousTopLayoutGuideLength = topLayoutGuide.length
     }
@@ -151,10 +148,10 @@ open class SwiftyPageController: UIViewController {
     // MARK: - Actions
     
     fileprivate func setupContentInsets(in controller: UIViewController) {
-        if let scrollView = controller.view.subviews.first as? UIScrollView, controller.automaticallyAdjustsScrollViewInsets {
+        if let scrollView = controller.view.subviews.first as? UIScrollView {
             customAdjustScrollViewInsets(in: scrollView)
         }
-        if let scrollView = controller.view as? UIScrollView, controller.automaticallyAdjustsScrollViewInsets {
+        if let scrollView = controller.view as? UIScrollView {
             customAdjustScrollViewInsets(in: scrollView)
         }
     }
@@ -248,6 +245,10 @@ open class SwiftyPageController: UIViewController {
     
     public func selectController(atIndex index: Int, animated: Bool) {
         assert(viewControllers.count != 0, "Array 'viewControllers' count couldn't be 0")
+        
+        if !childViewControllers.contains(viewControllers[index]) {
+            addChildViewController(viewControllers[index])
+        }
         
         if selectedIndex == nil {
             selectController(atIndex: index)
