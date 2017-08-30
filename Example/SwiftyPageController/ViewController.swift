@@ -26,9 +26,6 @@ class ViewController: UIViewController {
     
     func setupContainerController(_ controller: SwiftyPageController) {
         containerController = controller
-        
-        containerController.isEnabledSwipeAction = false
-        
         containerController.delegate = self
         
         let firstController = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "\(FirstViewController.self)")
