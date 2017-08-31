@@ -226,6 +226,7 @@ open class SwiftyPageController: UIViewController {
         
         // handle end of transition in case no pan gesture
         if panGesture.state != .changed {
+            willFinishAnimationTransition = true
             DispatchQueue.main.asyncAfter(deadline: .now() + animator.animationDuration / Double(kAnimation), execute: {
                 self.finishTransition()
             })
@@ -278,18 +279,25 @@ open class SwiftyPageController: UIViewController {
         timerForInteractiveTransition = Timer.scheduledTimer(timeInterval: timeInterval, target: self, selector: #selector(finishAnimationTransition), userInfo: nil, repeats: true)
     }
     
+    var willFinishAnimationTransition = true
+    
     func finishAnimationTransition() {
-        if let fromController = fromControllerInteractive,
-            let toController = toControllerInteractive
-        {
+        if let fromController = fromControllerInteractive, let toController = toControllerInteractive {
             let timeOffset: Double = Double(animator.animationProgress) * Double(animator.animationDuration)
             let delta: Float = 0.002
-            animator.animationProgress += delta
+            
+            if willFinishAnimationTransition {
+                animator.animationProgress += delta
+            } else {
+                animator.animationProgress -= delta
+            }
             
             toController.view.layer.timeOffset = CFTimeInterval(timeOffset)
             fromController.view.layer.timeOffset = CFTimeInterval(timeOffset)
             if animator.animationProgress > 1.0 {
                 finishTransition()
+            } else if animator.animationProgress <= 0.0 {
+                toController.view.removeFromSuperview()
             }
         }
     }
@@ -379,6 +387,7 @@ open class SwiftyPageController: UIViewController {
             
             // interactive animation
             animator.animationProgress = fmin(fmax(Float(abs(translation.x) / containerView.bounds.width), 0.0), 2.0)
+            willFinishAnimationTransition = animator.animationProgress > 5.0
             let timeOffset = animator.animationProgress * Float(animator.animationDuration)
             toControllerInteractive?.view.layer.timeOffset = CFTimeInterval(timeOffset)
             fromControllerInteractive?.view.layer.timeOffset = CFTimeInterval(timeOffset)
