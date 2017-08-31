@@ -351,10 +351,15 @@ open class SwiftyPageController: UIViewController {
     public func selectController(atIndex index: Int, animated: Bool) {
         assert(viewControllers.count != 0, "Array 'viewControllers' count couldn't be 0")
         
+        // reset previous top layout guide variable
+        previousTopLayoutGuideLength = 0.0
+        
+        // add child view controller if it hasn't been added
         if !childViewControllers.contains(viewControllers[index]) {
             addChildViewController(viewControllers[index])
         }
         
+        // select controller
         if selectedIndex == nil {
             selectController(atIndex: index)
         } else {
