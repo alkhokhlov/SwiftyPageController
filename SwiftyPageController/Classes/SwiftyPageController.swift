@@ -111,6 +111,8 @@ open class SwiftyPageController: UIViewController {
     fileprivate var toControllerInteractive: UIViewController?
     fileprivate var fromControllerInteractive: UIViewController?
     fileprivate var animationDirectionInteractive: AnimationDirection!
+    fileprivate var willFinishAnimationTransition = true
+    fileprivate var timerVelocity = 1.0
     
     
     // MARK: - Life Cycle
@@ -196,7 +198,7 @@ open class SwiftyPageController: UIViewController {
         
         // setup animation
         
-        let kAnimation: Float = 2.0
+        let kAnimation: Float = 3.2
         let speed = panGesture.state != .changed ? kAnimation : 0.0
         
         let animationPositionToController = CABasicAnimation(keyPath: "position.x")
@@ -306,10 +308,8 @@ open class SwiftyPageController: UIViewController {
             toControllerInteractive?.view.layer.position.x = animationDirectionInteractive == .left ? containerView.bounds.width * 2.0 : -containerView.bounds.width / 2.0
         }
         
-        timerForInteractiveTransition = Timer.scheduledTimer(timeInterval: timeInterval, target: self, selector: #selector(finishAnimationTransition), userInfo: nil, repeats: true)
+        timerForInteractiveTransition = Timer.scheduledTimer(timeInterval: timeInterval / timerVelocity, target: self, selector: #selector(finishAnimationTransition), userInfo: nil, repeats: true)
     }
-    
-    var willFinishAnimationTransition = true
     
     func finishAnimationTransition() {
         if let fromController = fromControllerInteractive, let toController = toControllerInteractive {
@@ -436,12 +436,35 @@ open class SwiftyPageController: UIViewController {
             toControllerInteractive?.view.layer.timeOffset = CFTimeInterval(timeOffset)
             fromControllerInteractive?.view.layer.timeOffset = CFTimeInterval(timeOffset)
         case .cancelled, .ended:
+            // finish animation relatively velocity
+            let velocity = sender.velocity(in: view)
+            if abs(velocity.x) > 32.0 {
+                timerVelocity = 2.0
+                willFinishAnimationTransition = true
+            } else {
+                timerVelocity = 1.0
+            }
+            
             interactiveTransitionInProgress = false
             if fromControllerInteractive != nil, toControllerInteractive != nil {
                 startTimerForInteractiveTransition()
             }
         default:
             break
+        }
+    }
+    
+    func swipeAction(direction: AnimationDirection) {
+        if direction == .right {
+            let index = selectedIndex! - 1
+            if index >= 0 {
+                selectController(atIndex: index, animated: isEnabledAnimation)
+            }
+        } else {
+            let index = selectedIndex! + 1
+            if index <= viewControllers.count - 1 {
+                selectController(atIndex: index, animated: isEnabledAnimation)
+            }
         }
     }
 
