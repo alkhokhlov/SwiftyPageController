@@ -86,9 +86,6 @@ open class SwiftyPageController: UIViewController {
         }
         
         didSet {
-            for viewController in viewControllers {
-                addChildViewController(viewController)
-            }
             if viewIfLoaded != nil {
                 selectController(atIndex: viewControllers.index(of: selectedController)!, animated: false)
             }
@@ -113,6 +110,7 @@ open class SwiftyPageController: UIViewController {
     fileprivate var interactiveTransitionInProgress = false
     fileprivate var toControllerInteractive: UIViewController?
     fileprivate var fromControllerInteractive: UIViewController?
+    fileprivate var animationDirectionInteractive: AnimationDirection!
     
     
     // MARK: - Life Cycle
@@ -199,6 +197,7 @@ open class SwiftyPageController: UIViewController {
         // setup animation
         
         let kAnimation: Float = 2.0
+        let speed = panGesture.state != .changed ? kAnimation : 0.0
         
         let animationPositionToController = CABasicAnimation(keyPath: "position.x")
         animationPositionToController.duration = animator.animationDuration
@@ -206,15 +205,14 @@ open class SwiftyPageController: UIViewController {
         animationPositionToController.toValue = toController.view.frame.width / 2.0
         animationPositionToController.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseOut)
         
-        toController.view.layer.speed = panGesture.state != .changed ? kAnimation : 0.0
+        toController.view.layer.speed = speed
         toController.view.layer.add(animationPositionToController, forKey: toControllerAnimationIdentifier)
         
         let animationPositionFromController = animationPositionToController
         animationPositionFromController.fromValue = fromController.view.layer.position.x
         animationPositionFromController.toValue = animationDirection == .left ? (-toController.view.frame.width / 2.0) : (toController.view.frame.width * 1.5)
-        animationPositionFromController.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseOut)
         
-        fromController.view.layer.speed = panGesture.state != .changed ? kAnimation : 0.0
+        fromController.view.layer.speed = speed
         fromController.view.layer.add(animationPositionFromController, forKey: fromControllerAnimationIdentifier)
         
         // call delegate 'willMoveToController' method
@@ -223,6 +221,7 @@ open class SwiftyPageController: UIViewController {
         // assignment variables
         fromControllerInteractive = fromController
         toControllerInteractive = toController
+        animationDirectionInteractive = animationDirection
         
         // handle end of transition in case no pan gesture
         if panGesture.state != .changed {
@@ -273,9 +272,40 @@ open class SwiftyPageController: UIViewController {
         }
     }
     
+    fileprivate func cancelTransition() {
+        if let toController = toControllerInteractive, let fromController = fromControllerInteractive {
+            // drop timer
+            timerForInteractiveTransition?.invalidate()
+            timerForInteractiveTransition = nil
+            
+            // remove toController from hierarchy
+            toController.view.removeFromSuperview()
+            toController.removeFromParentViewController()
+            
+            // remove animations
+            toController.view.layer.removeAnimation(forKey: toControllerAnimationIdentifier)
+            fromController.view.layer.removeAnimation(forKey: fromControllerAnimationIdentifier)
+            
+            // change selectedIndex
+            selectedIndex = viewControllers.index(of: fromController)!
+            
+            // clear variables
+            isAnimating = false
+            toControllerInteractive = nil
+            fromControllerInteractive = nil
+        }
+    }
+    
     fileprivate func startTimerForInteractiveTransition() {
         isAnimating = true
         let timeInterval = 0.001
+        
+        if willFinishAnimationTransition {
+            toControllerInteractive?.view.layer.position.x = UIScreen.main.bounds.width / 2.0
+        } else {
+            toControllerInteractive?.view.layer.position.x = animationDirectionInteractive == .left ? containerView.bounds.width * 2.0 : -containerView.bounds.width / 2.0
+        }
+        
         timerForInteractiveTransition = Timer.scheduledTimer(timeInterval: timeInterval, target: self, selector: #selector(finishAnimationTransition), userInfo: nil, repeats: true)
     }
     
@@ -294,10 +324,10 @@ open class SwiftyPageController: UIViewController {
             
             toController.view.layer.timeOffset = CFTimeInterval(timeOffset)
             fromController.view.layer.timeOffset = CFTimeInterval(timeOffset)
-            if animator.animationProgress > 1.0 {
+            if animator.animationProgress >= 1.0 {
                 finishTransition()
             } else if animator.animationProgress <= 0.0 {
-                toController.view.removeFromSuperview()
+                cancelTransition()
             }
         }
     }
@@ -343,6 +373,10 @@ open class SwiftyPageController: UIViewController {
     public func selectController(atIndex index: Int, animated: Bool) {
         assert(viewControllers.count != 0, "Array 'viewControllers' count couldn't be 0")
         
+        if !childViewControllers.contains(viewControllers[index]) {
+            addChildViewController(viewControllers[index])
+        }
+        
         if selectedIndex == nil {
             selectController(atIndex: index)
         } else {
@@ -385,9 +419,19 @@ open class SwiftyPageController: UIViewController {
                 }
             }
             
+            // cancel transition in case of changing direction
+            if (translation.x > 0 && animationDirectionInteractive != .right) || (translation.x < 0 && animationDirectionInteractive != .left) {
+                interactiveTransitionInProgress = false
+                cancelTransition()
+            }
+            
+            // set layer position
+            toControllerInteractive?.view.layer.position.x = translation.x > 0 ? containerView.bounds.width * 2.0 : -containerView.bounds.width / 2.0
+            
             // interactive animation
             animator.animationProgress = fmin(fmax(Float(abs(translation.x) / containerView.bounds.width), 0.0), 2.0)
-            willFinishAnimationTransition = animator.animationProgress > 5.0
+            
+            willFinishAnimationTransition = animator.animationProgress > 0.5
             let timeOffset = animator.animationProgress * Float(animator.animationDuration)
             toControllerInteractive?.view.layer.timeOffset = CFTimeInterval(timeOffset)
             fromControllerInteractive?.view.layer.timeOffset = CFTimeInterval(timeOffset)
