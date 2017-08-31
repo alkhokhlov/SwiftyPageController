@@ -409,20 +409,24 @@ open class SwiftyPageController: UIViewController {
             // interactive animation
             animator.animationProgress = fmin(fmax(Float(abs(translation.x) / containerView.bounds.width), 0.0), 2.0)
             
-            willFinishAnimationTransition = animator.animationProgress > 0.5
+            willFinishAnimationTransition = animator.animationProgress > 0.4
             let timeOffset = animator.animationProgress * Float(animator.animationDuration)
             toControllerInteractive?.view.layer.timeOffset = CFTimeInterval(timeOffset)
             fromControllerInteractive?.view.layer.timeOffset = CFTimeInterval(timeOffset)
         case .cancelled, .ended:
             // finish animation relatively velocity
             let velocity = sender.velocity(in: view)
-            if abs(velocity.x) > 32.0 {
-                timerVelocity = 2.0
-                willFinishAnimationTransition = true
-            } else {
+            if animationDirectionInteractive == .left ? (velocity.x > 0) : (velocity.x < 0) {
                 timerVelocity = 1.0
+                willFinishAnimationTransition = false
+            } else {
+                if abs(velocity.x) > 32.0 {
+                    timerVelocity = 2.0
+                    willFinishAnimationTransition = true
+                } else {
+                    timerVelocity = 1.0
+                }
             }
-            
             interactiveTransitionInProgress = false
             if fromControllerInteractive != nil, toControllerInteractive != nil {
                 startTimerForInteractiveTransition()
