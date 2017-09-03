@@ -155,32 +155,34 @@ open class SwiftyPageController: UIViewController {
     }
     
     fileprivate func setupContentInsets(in controller: UIViewController) {
-        if let scrollView = controller.view.subviews.first as? UIScrollView, controller.automaticallyAdjustsScrollViewInsets {
-            customAdjustScrollViewInsets(in: scrollView)
-        }
-        if let scrollView = controller.view as? UIScrollView, controller.automaticallyAdjustsScrollViewInsets {
-            customAdjustScrollViewInsets(in: scrollView)
+        if controller.viewIfLoaded != nil {
+            if let scrollView = controller.view.subviews.first as? UIScrollView {
+                customAdjustScrollViewInsets(in: scrollView, isAutomaticallyAdjustsScrollViewInsets: controller.automaticallyAdjustsScrollViewInsets)
+            }
+            if let scrollView = controller.view as? UIScrollView {
+                customAdjustScrollViewInsets(in: scrollView, isAutomaticallyAdjustsScrollViewInsets: controller.automaticallyAdjustsScrollViewInsets)
+            }
         }
     }
     
     // MARK: - Actions
     
-    fileprivate func customAdjustScrollViewInsets(in scrollView: UIScrollView) {
+    fileprivate func customAdjustScrollViewInsets(in scrollView: UIScrollView, isAutomaticallyAdjustsScrollViewInsets: Bool) {
         if let containerInsets = containerInsets {
             scrollView.contentInset = containerInsets
             scrollView.scrollIndicatorInsets = scrollView.contentInset
-        } else {
+        } else if isAutomaticallyAdjustsScrollViewInsets {
             scrollView.contentInset = UIEdgeInsets(top: topLayoutGuide.length, left: 0.0, bottom: bottomLayoutGuide.length, right: 0.0)
             scrollView.scrollIndicatorInsets = scrollView.contentInset
         }
         
         // restore content offset
-        if abs(scrollView.contentOffset.y) == scrollView.contentInset.top {
-            previousTopLayoutGuideLength = scrollView.contentInset.top
+        if abs(scrollView.contentOffset.y) == topLayoutGuide.length {
+            previousTopLayoutGuideLength = topLayoutGuide.length
         }
-
-        scrollView.contentOffset.y += previousTopLayoutGuideLength - scrollView.contentInset.top
-        previousTopLayoutGuideLength = scrollView.contentInset.top
+        
+        scrollView.contentOffset.y += previousTopLayoutGuideLength - topLayoutGuide.length
+        previousTopLayoutGuideLength = topLayoutGuide.length
     }
     
     fileprivate func interactiveTransition(fromController: UIViewController, toController: UIViewController, animationDirection: AnimationDirection) {
@@ -350,9 +352,6 @@ open class SwiftyPageController: UIViewController {
     
     public func selectController(atIndex index: Int, animated: Bool) {
         assert(viewControllers.count != 0, "Array 'viewControllers' count couldn't be 0")
-        
-        // reset previous top layout guide variable
-        previousTopLayoutGuideLength = 0.0
         
         // add child view controller if it hasn't been added
         if !childViewControllers.contains(viewControllers[index]) {
