@@ -186,25 +186,13 @@ open class SwiftyPageController: UIViewController {
         bottompContainerConstraint.isActive = true
         view.layoutIfNeeded()
         
-<<<<<<< HEAD
-        selectController(atIndex: selectedIndex ?? 0, animated: false)
-=======
         // select controller
         selectController(atIndex: selectedIndex ?? 0)
->>>>>>> interaction
-        
         // assignment variable
         previousTopLayoutGuideLength = topLayoutGuide.length
     }
     
     fileprivate func setupContentInsets(in controller: UIViewController) {
-<<<<<<< HEAD
-        if let scrollView = controller.view.subviews.first as? UIScrollView {
-            customAdjustScrollViewInsets(in: scrollView)
-        }
-        if let scrollView = controller.view as? UIScrollView {
-            customAdjustScrollViewInsets(in: scrollView)
-=======
         if controller.viewIfLoaded != nil {
             if let scrollView = controller.view.subviews.first as? UIScrollView {
                 customAdjustScrollViewInsets(in: scrollView, isAutomaticallyAdjustsScrollViewInsets: controller.automaticallyAdjustsScrollViewInsets)
@@ -212,7 +200,6 @@ open class SwiftyPageController: UIViewController {
             if let scrollView = controller.view as? UIScrollView {
                 customAdjustScrollViewInsets(in: scrollView, isAutomaticallyAdjustsScrollViewInsets: controller.automaticallyAdjustsScrollViewInsets)
             }
->>>>>>> interaction
         }
     }
     
@@ -404,18 +391,12 @@ open class SwiftyPageController: UIViewController {
     public func selectController(atIndex index: Int, animated: Bool) {
         assert(viewControllers.count != 0, "Array 'viewControllers' count couldn't be 0")
         
-<<<<<<< HEAD
-=======
         // add child view controller if it hasn't been added
->>>>>>> interaction
         if !childViewControllers.contains(viewControllers[index]) {
             addChildViewController(viewControllers[index])
         }
         
-<<<<<<< HEAD
-=======
         // select controller
->>>>>>> interaction
         if selectedIndex == nil {
             selectController(atIndex: index)
         } else {

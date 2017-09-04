@@ -7,15 +7,15 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1A61C30D7F166AA3DF8778C17545F9EF /* SwiftyPageControllerAnimatorDefault.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2D2A2C86F03CE5990DDB2D05DDC43A9 /* SwiftyPageControllerAnimatorDefault.swift */; };
 		24E325985423632FC9A7681BB2187D89 /* Pods-SwiftyPageController_Example-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 544C9EE40154085026E656981219A32D /* Pods-SwiftyPageController_Example-dummy.m */; };
 		2E40577D760C25E371178FDA47BF8D3B /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CBB3DE36805AF21409EC968A9691732F /* Foundation.framework */; };
 		42F9C4205A03B6FAEF2D6EE36BFFFC45 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CBB3DE36805AF21409EC968A9691732F /* Foundation.framework */; };
+		4EE1062E8783491AE208A246DD42F084 /* SwiftyPageControllerAnimatorParallax.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F62289501730245D54595380D8661F7 /* SwiftyPageControllerAnimatorParallax.swift */; };
 		5AC99ECD2CB600618E098E969681B1D4 /* Pods-SwiftyPageController_Example-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 6EC2067F9AD34C4FFBF62957DF529E50 /* Pods-SwiftyPageController_Example-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		7946FBFCB2206DE8B064FCB30E7BA8C3 /* SwiftyPageController-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = AD4A9B75F0CB3D849F1256EA1F89C9A9 /* SwiftyPageController-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		943F2C4F6546F45D63CE3A578C69DA6C /* SwiftyPageController-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = B17C39E1335878D3B7893AB67C7C7F40 /* SwiftyPageController-dummy.m */; };
-		CA61FAB019AE7CCE9869D4BF04EBA284 /* SwiftyPageControllerAnimatorDefault.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52D349D08D93AF99EF805D650BBF120C /* SwiftyPageControllerAnimatorDefault.swift */; };
-		D38259963ED3579D8CB6584D1C246C4D /* SwiftyPageControllerAnimatorParallax.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9296939AADB7FFEAE1F66A3D5C4A939A /* SwiftyPageControllerAnimatorParallax.swift */; };
-		E00E766E22AE26F6BBB83323D04F7640 /* SwiftyPageController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 225DB3C64F5C042DECB16B43A9FAA3A0 /* SwiftyPageController.swift */; };
+		DAEA53B8786A36B2E38BF671966A51AF /* SwiftyPageController-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = B17C39E1335878D3B7893AB67C7C7F40 /* SwiftyPageController-dummy.m */; };
+		EF5BB3FE3493340D3AFAE0D7F1CBF656 /* SwiftyPageController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 900436A6DCC3822D37E48BC93F483E18 /* SwiftyPageController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -29,29 +29,29 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		0F62289501730245D54595380D8661F7 /* SwiftyPageControllerAnimatorParallax.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SwiftyPageControllerAnimatorParallax.swift; sourceTree = "<group>"; };
 		1CB4FFE176AFC414AE4C5FF7B5312C5E /* SwiftyPageController.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = SwiftyPageController.xcconfig; sourceTree = "<group>"; };
-		225DB3C64F5C042DECB16B43A9FAA3A0 /* SwiftyPageController.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SwiftyPageController.swift; sourceTree = "<group>"; };
 		2A1CA9C5F94BFBF06415C610DB95D07E /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		52D349D08D93AF99EF805D650BBF120C /* SwiftyPageControllerAnimatorDefault.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SwiftyPageControllerAnimatorDefault.swift; sourceTree = "<group>"; };
 		544C9EE40154085026E656981219A32D /* Pods-SwiftyPageController_Example-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Pods-SwiftyPageController_Example-dummy.m"; sourceTree = "<group>"; };
 		5A8A37C1C390895ECF8767D7499458C7 /* Pods-SwiftyPageController_Example-resources.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-SwiftyPageController_Example-resources.sh"; sourceTree = "<group>"; };
-		5D46C34C05AE60B3B7FDEDFC3671D7E1 /* Pods_SwiftyPageController_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SwiftyPageController_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		5D46C34C05AE60B3B7FDEDFC3671D7E1 /* Pods_SwiftyPageController_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = Pods_SwiftyPageController_Example.framework; path = "Pods-SwiftyPageController_Example.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
 		6EC2067F9AD34C4FFBF62957DF529E50 /* Pods-SwiftyPageController_Example-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Pods-SwiftyPageController_Example-umbrella.h"; sourceTree = "<group>"; };
 		743F8EF019E15C5F1263867D5C21722B /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		86230C903D5982D805985AEEB9C43B84 /* SwiftyPageController.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = "sourcecode.module-map"; path = SwiftyPageController.modulemap; sourceTree = "<group>"; };
+		86230C903D5982D805985AEEB9C43B84 /* SwiftyPageController.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; path = SwiftyPageController.modulemap; sourceTree = "<group>"; };
 		8D258B43C9B99062BE660705B3993699 /* Pods-SwiftyPageController_Example.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-SwiftyPageController_Example.debug.xcconfig"; sourceTree = "<group>"; };
-		9296939AADB7FFEAE1F66A3D5C4A939A /* SwiftyPageControllerAnimatorParallax.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SwiftyPageControllerAnimatorParallax.swift; sourceTree = "<group>"; };
+		900436A6DCC3822D37E48BC93F483E18 /* SwiftyPageController.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SwiftyPageController.swift; sourceTree = "<group>"; };
 		929A18DB613D45EDD9E08295F518A67B /* Pods-SwiftyPageController_Example-acknowledgements.markdown */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = "Pods-SwiftyPageController_Example-acknowledgements.markdown"; sourceTree = "<group>"; };
-		93A4A3777CF96A4AAC1D13BA6DCCEA73 /* Podfile */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; name = Podfile; path = ../Podfile; sourceTree = SOURCE_ROOT; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
+		93A4A3777CF96A4AAC1D13BA6DCCEA73 /* Podfile */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; lastKnownFileType = text; name = Podfile; path = ../Podfile; sourceTree = SOURCE_ROOT; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		99670506DD26245BEF974FBB297A3CE9 /* SwiftyPageController-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "SwiftyPageController-prefix.pch"; sourceTree = "<group>"; };
 		A19486565A97435DC1CF79C199193C8D /* Pods-SwiftyPageController_Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-SwiftyPageController_Example.release.xcconfig"; sourceTree = "<group>"; };
+		A2D2A2C86F03CE5990DDB2D05DDC43A9 /* SwiftyPageControllerAnimatorDefault.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SwiftyPageControllerAnimatorDefault.swift; sourceTree = "<group>"; };
 		AD4A9B75F0CB3D849F1256EA1F89C9A9 /* SwiftyPageController-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "SwiftyPageController-umbrella.h"; sourceTree = "<group>"; };
-		B047B37700948600FF30C7A44B672EED /* SwiftyPageController.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SwiftyPageController.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B047B37700948600FF30C7A44B672EED /* SwiftyPageController.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = SwiftyPageController.framework; path = SwiftyPageController.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B129EE5AB0677D49A94C067FDE4488D3 /* Pods-SwiftyPageController_Example-frameworks.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-SwiftyPageController_Example-frameworks.sh"; sourceTree = "<group>"; };
 		B17C39E1335878D3B7893AB67C7C7F40 /* SwiftyPageController-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "SwiftyPageController-dummy.m"; sourceTree = "<group>"; };
 		CBB3DE36805AF21409EC968A9691732F /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS10.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		E1C9649A4BE96A93F70F269F58C2525E /* Pods-SwiftyPageController_Example-acknowledgements.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-SwiftyPageController_Example-acknowledgements.plist"; sourceTree = "<group>"; };
-		F3CBCFF31B65BB24A14B8DF03E31A352 /* Pods-SwiftyPageController_Example.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = "sourcecode.module-map"; path = "Pods-SwiftyPageController_Example.modulemap"; sourceTree = "<group>"; };
+		F3CBCFF31B65BB24A14B8DF03E31A352 /* Pods-SwiftyPageController_Example.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; path = "Pods-SwiftyPageController_Example.modulemap"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -111,8 +111,9 @@
 		5463A9E529C30199BFE5CA72B92DEF71 /* SwiftyPageController */ = {
 			isa = PBXGroup;
 			children = (
-				F708D9E25E80316D1120E9F5EA0DA250 /* Classes */,
+				9BE75DCE165EE67999F686D05CED50C4 /* Classes */,
 			);
+			name = SwiftyPageController;
 			path = SwiftyPageController;
 			sourceTree = "<group>";
 		};
@@ -142,6 +143,17 @@
 				B047B37700948600FF30C7A44B672EED /* SwiftyPageController.framework */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		9BE75DCE165EE67999F686D05CED50C4 /* Classes */ = {
+			isa = PBXGroup;
+			children = (
+				900436A6DCC3822D37E48BC93F483E18 /* SwiftyPageController.swift */,
+				A2D2A2C86F03CE5990DDB2D05DDC43A9 /* SwiftyPageControllerAnimatorDefault.swift */,
+				0F62289501730245D54595380D8661F7 /* SwiftyPageControllerAnimatorParallax.swift */,
+			);
+			name = Classes;
+			path = Classes;
 			sourceTree = "<group>";
 		};
 		9DA225EC37DB460DA1A990472BA87342 /* Support Files */ = {
@@ -176,16 +188,6 @@
 			path = ../..;
 			sourceTree = "<group>";
 		};
-		F708D9E25E80316D1120E9F5EA0DA250 /* Classes */ = {
-			isa = PBXGroup;
-			children = (
-				225DB3C64F5C042DECB16B43A9FAA3A0 /* SwiftyPageController.swift */,
-				52D349D08D93AF99EF805D650BBF120C /* SwiftyPageControllerAnimatorDefault.swift */,
-				9296939AADB7FFEAE1F66A3D5C4A939A /* SwiftyPageControllerAnimatorParallax.swift */,
-			);
-			path = Classes;
-			sourceTree = "<group>";
-		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -212,7 +214,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 36414368F9064C241A3C507707C3D676 /* Build configuration list for PBXNativeTarget "SwiftyPageController" */;
 			buildPhases = (
-				D1DD3184A8DB31EDDF6CF478FBC148CF /* Sources */,
+				49E54BAFA6691A0493E9938D7D028920 /* Sources */,
 				2C8D08B127D53C2EEECD856A91014E95 /* Frameworks */,
 				907799F45D88A2E82A8FCF296158847F /* Headers */,
 			);
@@ -279,14 +281,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		D1DD3184A8DB31EDDF6CF478FBC148CF /* Sources */ = {
+		49E54BAFA6691A0493E9938D7D028920 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				943F2C4F6546F45D63CE3A578C69DA6C /* SwiftyPageController-dummy.m in Sources */,
-				E00E766E22AE26F6BBB83323D04F7640 /* SwiftyPageController.swift in Sources */,
-				CA61FAB019AE7CCE9869D4BF04EBA284 /* SwiftyPageControllerAnimatorDefault.swift in Sources */,
-				D38259963ED3579D8CB6584D1C246C4D /* SwiftyPageControllerAnimatorParallax.swift in Sources */,
+				DAEA53B8786A36B2E38BF671966A51AF /* SwiftyPageController-dummy.m in Sources */,
+				EF5BB3FE3493340D3AFAE0D7F1CBF656 /* SwiftyPageController.swift in Sources */,
+				1A61C30D7F166AA3DF8778C17545F9EF /* SwiftyPageControllerAnimatorDefault.swift in Sources */,
+				4EE1062E8783491AE208A246DD42F084 /* SwiftyPageControllerAnimatorParallax.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
