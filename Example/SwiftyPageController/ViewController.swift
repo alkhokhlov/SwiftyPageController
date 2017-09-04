@@ -26,22 +26,16 @@ class ViewController: UIViewController {
     
     func setupContainerController(_ controller: SwiftyPageController) {
         containerController = controller
-        
         containerController.delegate = self
         
+        containerController.animator = .parallax
+                
         let firstController = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "\(FirstViewController.self)")
         let secondController = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "\(SecondViewController.self)")
         let thirdController = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "\(ThirdViewController.self)")
         containerController.viewControllers = [firstController, secondController, thirdController]
         
         containerController.selectController(atIndex: 0, animated: false)
-    }
-
-    @IBAction func shuffleButtonDidTap(_ sender: Any) {
-        let firstController = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "\(FirstViewController.self)")
-        let secondController = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "\(SecondViewController.self)")
-        let thirdController = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "\(ThirdViewController.self)")
-        containerController.viewControllers = [firstController, secondController, thirdController].shuffled()
     }
     
     // MARK: - Navigation
@@ -62,10 +56,12 @@ extension ViewController: SwiftyPageControllerDelegate {
         
     }
     
-    func swiftyPageController(_ controller: SwiftyPageController, didMoveToController toController: UIViewController) { }
+    func swiftyPageController(_ controller: SwiftyPageController, didMoveToController toController: UIViewController) {
+        segmentControl.selectedSegmentIndex = containerController.viewControllers.index(of: toController)!
+    }
     
     func swiftyPageController(_ controller: SwiftyPageController, willMoveToController toController: UIViewController) {
-        segmentControl.selectedSegmentIndex = containerController.viewControllers.index(of: toController)!
+        
     }
     
 }
