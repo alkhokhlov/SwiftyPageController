@@ -44,6 +44,39 @@ open class SwiftyPageController: UIViewController {
     
     // MARK: - Types
     
+    public enum AnimatorType {
+        case `default`
+        case parallax
+        case custom(SwiftyPageControllerAnimatorProtocol)
+        
+        var controller: SwiftyPageControllerAnimatorProtocol {
+            get {
+                switch self {
+                case .`default`:
+                    return AnimatorControllers.default
+                case .parallax:
+                    return AnimatorControllers.parallax
+                case .custom(let controller):
+                    if AnimatorControllers.custom == nil {
+                        AnimatorControllers.custom = controller
+                    }
+                    return AnimatorControllers.custom!
+                }
+            }
+            
+            set {
+                switch self {
+                case .`default`:
+                    AnimatorControllers.default = newValue as! SwiftyPageControllerAnimatorDefault
+                case .parallax:
+                    AnimatorControllers.parallax = newValue as! SwiftyPageControllerAnimatorParallax
+                case .custom(_):
+                    AnimatorControllers.custom = newValue
+                }
+            }
+        }
+    }
+    
     public enum AnimationDirection {
         case left
         case right
@@ -55,7 +88,7 @@ open class SwiftyPageController: UIViewController {
     public private(set) var selectedIndex: Int?
     public var panGesture: UIPanGestureRecognizer!
     public var isEnabledAnimation = true
-    public var animator: SwiftyPageControllerAnimatorProtocol = SwiftyPageControllerAnimator()
+    public var animator: AnimatorType = .default
     public var containerPaddings: UIEdgeInsets? {
         didSet {
             topContainerConstraint.constant = containerPaddings?.top ?? 0
@@ -95,6 +128,12 @@ open class SwiftyPageController: UIViewController {
     fileprivate var nextIndex: Int?
     fileprivate var isAnimating = false
     fileprivate var previousTopLayoutGuideLength: CGFloat!
+    
+    fileprivate enum AnimatorControllers {
+        static var `default` = SwiftyPageControllerAnimatorDefault()
+        static var parallax = SwiftyPageControllerAnimatorParallax()
+        static var custom: SwiftyPageControllerAnimatorProtocol?
+    }
     
     // container view
     fileprivate var containerView = UIView(frame: CGRect.zero)
@@ -198,7 +237,7 @@ open class SwiftyPageController: UIViewController {
         setupContentInsets(in: toController)
         
         // setup animation
-        animator.setupAnimation(fromController: fromController, toController: toController, panGesture: panGesture, animationDirection: animationDirection)
+        animator.controller.setupAnimation(fromController: fromController, toController: toController, panGesture: panGesture, animationDirection: animationDirection)
         
         // call delegate 'willMoveToController' method
         delegate?.swiftyPageController(self, willMoveToController: toController)
@@ -211,7 +250,7 @@ open class SwiftyPageController: UIViewController {
         // handle end of transition in case no pan gesture
         if panGesture.state != .changed {
             willFinishAnimationTransition = true
-            DispatchQueue.main.asyncAfter(deadline: .now() + animator.animationDuration / Double(animator.animationSpeed), execute: {
+            DispatchQueue.main.asyncAfter(deadline: .now() + animator.controller.animationDuration / Double(animator.controller.animationSpeed), execute: {
                 self.finishTransition()
             })
         }
@@ -243,7 +282,7 @@ open class SwiftyPageController: UIViewController {
             fromControllerInteractive = nil
             
             // call delegate 'didFinishAnimation' method
-            animator.didFinishAnimation(fromController: fromController, toController: toController)
+            animator.controller.didFinishAnimation(fromController: fromController, toController: toController)
             
             // logic for transition between child view controllers
             if let nextIndex = nextIndex {
@@ -274,7 +313,7 @@ open class SwiftyPageController: UIViewController {
             toControllerInteractive = nil
             fromControllerInteractive = nil
             
-            animator.didFinishAnimation(fromController: fromController, toController: toController)
+            animator.controller.didFinishAnimation(fromController: fromController, toController: toController)
         }
     }
     
@@ -293,20 +332,20 @@ open class SwiftyPageController: UIViewController {
     
     func finishAnimationTransition() {
         if let fromController = fromControllerInteractive, let toController = toControllerInteractive {
-            let timeOffset: Double = Double(animator.animationProgress) * Double(animator.animationDuration)
+            let timeOffset: Double = Double(animator.controller.animationProgress) * Double(animator.controller.animationDuration)
             let delta: Float = 0.002
             
             if willFinishAnimationTransition {
-                animator.animationProgress += delta
+                animator.controller.animationProgress += delta
             } else {
-                animator.animationProgress -= delta
+                animator.controller.animationProgress -= delta
             }
             
             toController.view.layer.timeOffset = CFTimeInterval(timeOffset)
             fromController.view.layer.timeOffset = CFTimeInterval(timeOffset)
-            if animator.animationProgress >= 1.0 {
+            if animator.controller.animationProgress >= 1.0 {
                 finishTransition()
-            } else if animator.animationProgress <= 0.0 {
+            } else if animator.controller.animationProgress <= 0.0 {
                 cancelTransition()
             }
         }
@@ -411,10 +450,10 @@ open class SwiftyPageController: UIViewController {
             toControllerInteractive?.view.layer.position.x = translation.x > 0 ? containerView.bounds.width * 2.0 : -containerView.bounds.width / 2.0
             
             // interactive animation
-            animator.animationProgress = fmin(fmax(Float(abs(translation.x) / containerView.bounds.width), 0.0), 2.0)
+            animator.controller.animationProgress = fmin(fmax(Float(abs(translation.x) / containerView.bounds.width), 0.0), 2.0)
             
-            willFinishAnimationTransition = animator.animationProgress > 0.4
-            let timeOffset = animator.animationProgress * Float(animator.animationDuration)
+            willFinishAnimationTransition = animator.controller.animationProgress > 0.4
+            let timeOffset = animator.controller.animationProgress * Float(animator.controller.animationDuration)
             toControllerInteractive?.view.layer.timeOffset = CFTimeInterval(timeOffset)
             fromControllerInteractive?.view.layer.timeOffset = CFTimeInterval(timeOffset)
         case .cancelled, .ended:

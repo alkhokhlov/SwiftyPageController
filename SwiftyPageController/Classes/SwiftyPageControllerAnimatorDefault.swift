@@ -9,7 +9,7 @@
 import Foundation
 import UIKit
 
-open class SwiftyPageControllerAnimator: SwiftyPageControllerAnimatorProtocol {
+open class SwiftyPageControllerAnimatorDefault: SwiftyPageControllerAnimatorProtocol {
     
     fileprivate var _animationProgress: Float!
     fileprivate var _animationSpeed: Float = 3.2

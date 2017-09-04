@@ -6,11 +6,11 @@ DEPENDENCIES:
 
 EXTERNAL SOURCES:
   SwiftyPageController:
-    :path: "../"
+    :path: ../
 
 SPEC CHECKSUMS:
-  SwiftyPageController: d9cbe10377df7d506f114a762ce138ca7c01d24b
+  SwiftyPageController: 0466fe3466a8f51f09eb9fe973749c435168e183
 
 PODFILE CHECKSUM: 6cf86b7e8f085b125780d992e0ab9f2efc1dc7c4
 
-COCOAPODS: 1.2.1
+COCOAPODS: 1.2.0
