@@ -54,7 +54,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="QSm-bm-QlV" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="3763" y="789"/>
+            <point key="canvasLocation" x="4082" y="788"/>
         </scene>
         <!--First View Controller-->
         <scene sceneID="TPD-UK-6jw">
@@ -83,7 +83,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="TxE-VO-kWG" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="4328" y="789"/>
+            <point key="canvasLocation" x="4974" y="787"/>
         </scene>
         <!--Second View Controller-->
         <scene sceneID="Xxm-44-4pn">
@@ -112,7 +112,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="AGS-ab-6li" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="4889" y="789"/>
+            <point key="canvasLocation" x="5916" y="788"/>
         </scene>
         <!--Swifty Page Controller-->
         <scene sceneID="f76-eC-ihH">
@@ -130,7 +130,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="jyQ-lK-GFx" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="3764" y="1579"/>
+            <point key="canvasLocation" x="4082" y="1578"/>
         </scene>
         <!--Item-->
         <scene sceneID="ftE-d7-9DW">
@@ -178,7 +178,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="4PG-HY-Nij" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="5457" y="789"/>
+            <point key="canvasLocation" x="6808" y="788"/>
         </scene>
     </scenes>
     <resources>

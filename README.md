@@ -5,6 +5,8 @@
 [![License](https://img.shields.io/cocoapods/l/SwiftyPageController.svg?style=flat)](http://cocoapods.org/pods/SwiftyPageController)
 [![Platform](https://img.shields.io/cocoapods/p/SwiftyPageController.svg?style=flat)](http://cocoapods.org/pods/SwiftyPageController)
 
+![](./Attachments/parallax.gif "Parallax")
+
 ## Description
 
 **SwiftyPageController** will be helpful to use in many pages controller.
@@ -15,16 +17,117 @@ Advantages:
 
 ## How to use
 
- - Add contanier view from storyboard or programmatically
- - Choose class for conatiner controller "SwiftyPageController"
- - In ViewController where you added container controller implement delegate from "SwiftyPageController"
- - Setup viewController
- - For selecting needed tab user method 
+ - Add **Contanier View** from storyboard or programmatically
 
- ```swift
+![](./Attachments/tutorial_container.png "Tutorial. Add Container View")
+
+ - Choose class for container controller **SwiftyPageController**
+
+![](./Attachments/tutorial_set_class.png "Tutorial. Set class for Container View")
+
+ - Setup like example below
+
+```swift
+class ViewController: UIViewController {
+
+    @IBOutlet weak var segmentControl: UISegmentedControl!
+    
+    var containerController: SwiftyPageController!
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        segmentControl.addTarget(self, action: #selector(segmentControlDidChange(_:)), for: .valueChanged)
+    }
+    
+    func segmentControlDidChange(_ sender: UISegmentedControl) {
+        containerController.selectController(atIndex: sender.selectedSegmentIndex, animated: true)
+    }
+    
+    func setupContainerController(_ controller: SwiftyPageController) {
+        containerController = controller
+        containerController.delegate = self
+        
+        containerController.animator = .parallax
+                
+        let firstController = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "\(FirstViewController.self)")
+        let secondController = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "\(SecondViewController.self)")
+        let thirdController = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "\(ThirdViewController.self)")
+        containerController.viewControllers = [firstController, secondController, thirdController]
+        
+        containerController.selectController(atIndex: 0, animated: false)
+    }
+    
+    // MARK: - Navigation
+
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if let containerController = segue.destination as? SwiftyPageController {
+            setupContainerController(containerController)
+        }
+    }
+
+}
+```
+
+ - In ViewController where you added container controller implement delegate **SwiftyPageControllerDelegate**
+
+```swift
+func swiftyPageController(_ controller: SwiftyPageController, alongSideTransitionToController toController: UIViewController) {
+        
+    }
+    
+    func swiftyPageController(_ controller: SwiftyPageController, didMoveToController toController: UIViewController) {
+        segmentControl.selectedSegmentIndex = containerController.viewControllers.index(of: toController)!
+    }
+    
+    func swiftyPageController(_ controller: SwiftyPageController, willMoveToController toController: UIViewController) {
+        
+    }
+```
+
+ - For selecting needed tab use method 
+
+```swift
  func selectController(atIndex index: Int, animated: Bool)
 ```
 
+## Animation
+
+![](./Attachments/default.gif "Default")
+
+To choose animation use property
+
+```swift
+public var animator: AnimatorType
+```
+
+You can user three type of animation:
+ - default
+ - parallax
+ - custom
+
+ If you want to create own animation you need to implement **SwiftyPageControllerAnimatorProtocol**. 
+
+```swift
+public protocol SwiftyPageControllerAnimatorProtocol {
+    
+    var animationDuration: TimeInterval { get }
+    
+    var animationProgress: Float { get set }
+    
+    var animationSpeed: Float { get set }
+    
+    func setupAnimation(fromController: UIViewController, toController: UIViewController, panGesture: UIPanGestureRecognizer, animationDirection: SwiftyPageController.AnimationDirection)
+    
+    func didFinishAnimation(fromController: UIViewController, toController: UIViewController)
+    
+}
+```
+
+ And use it like that:
+
+```swift
+containerController.animator = .custom(CustomAnimationController())
+```
 
 ## Example
 
