@@ -16,8 +16,6 @@ open class SwiftyPageControllerAnimatorDefault: SwiftyPageControllerAnimatorProt
     fileprivate var timer: Timer!
     fileprivate var fromControllerAnimationIdentifier = "from.controller.animation.position.x"
     fileprivate var toControllerAnimationIdentifier = "to.controller.animation.position.x"
-    fileprivate var toControllerOpacityAnimationIdentifier = "to.controller.animation.opacity"
-    fileprivate var fromControllerOpacityAnimationIdentifier = "to.controller.animation.opacity"
     
     public var animationProgress: Float {
         get {
@@ -60,24 +58,6 @@ open class SwiftyPageControllerAnimatorDefault: SwiftyPageControllerAnimatorProt
         
         fromController.view.layer.add(animationPositionFromController, forKey: fromControllerAnimationIdentifier)
         
-        if isEnabledOpacity {
-            // opacity animation
-            
-            let animationOpacityToController = CABasicAnimation(keyPath: "opacity")
-            animationOpacityToController.duration = animationDuration
-            animationOpacityToController.fromValue = 0.0
-            animationOpacityToController.toValue = 1.0
-            animationOpacityToController.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseOut)
-            
-            toController.view.layer.add(animationOpacityToController, forKey: toControllerOpacityAnimationIdentifier)
-            
-            let animationOpacityFromController = animationOpacityToController
-            animationOpacityFromController.fromValue = 1.0
-            animationOpacityFromController.toValue = 0.0
-            
-            fromController.view.layer.add(animationOpacityFromController, forKey: fromControllerOpacityAnimationIdentifier)
-        }
-        
         // set speed
         
         toController.view.layer.speed = speed
@@ -88,11 +68,6 @@ open class SwiftyPageControllerAnimatorDefault: SwiftyPageControllerAnimatorProt
         // remove animations
         toController.view.layer.removeAnimation(forKey: toControllerAnimationIdentifier)
         fromController.view.layer.removeAnimation(forKey: fromControllerAnimationIdentifier)
-        
-        if isEnabledOpacity {
-            toController.view.layer.removeAnimation(forKey: toControllerOpacityAnimationIdentifier)
-            fromController.view.layer.removeAnimation(forKey: fromControllerOpacityAnimationIdentifier)
-        }
     }
     
 }
