@@ -222,7 +222,7 @@ open class SwiftyPageController: UIViewController {
         previousTopLayoutGuideLength = topLayoutGuide.length
     }
     
-    fileprivate func interactiveTransition(fromController: UIViewController, toController: UIViewController, animationDirection: AnimationDirection) {
+    fileprivate func transition(fromController: UIViewController, toController: UIViewController, animationDirection: AnimationDirection) {
         if fromController == toController {
             return
         }
@@ -249,30 +249,35 @@ open class SwiftyPageController: UIViewController {
         if panGesture.state != .changed {
             willFinishAnimationTransition = true
             DispatchQueue.main.asyncAfter(deadline: .now() + animator.controller.animationDuration / Double(animator.controller.animationSpeed), execute: {
-                self.finishTransition()
+                self.finishTransition(isCancelled: false)
             })
         }
     }
     
-    fileprivate func finishTransition() {
+    fileprivate func finishTransition(isCancelled: Bool) {
         if let fromController = fromControllerInteractive, let toController = toControllerInteractive {
             // drop timer
             timerForInteractiveTransition?.invalidate()
             timerForInteractiveTransition = nil
             
             // call delegate 'didMoveToController' method
-            delegate?.swiftyPageController(self, didMoveToController: toController)
+            delegate?.swiftyPageController(self, didMoveToController: isCancelled ? fromController : toController)
             
-            // remove fromController from hierarchy
-            fromController.didMove(toParentViewController: nil)
-            fromController.view.removeFromSuperview()
-            fromController.removeFromParentViewController()
-            
-            // present toController
-            toController.didMove(toParentViewController: self)
+            // remove toController from hierarchy
+            if isCancelled {
+                toController.view.removeFromSuperview()
+                toController.removeFromParentViewController()
+            } else {
+                fromController.didMove(toParentViewController: nil)
+                fromController.view.removeFromSuperview()
+                fromController.removeFromParentViewController()
+                
+                // present toController
+                toController.didMove(toParentViewController: self)
+            }
             
             // change selectedIndex
-            selectedIndex = viewControllers.index(of: toController)!
+            selectedIndex = viewControllers.index(of: isCancelled ? fromController : toController)!
             
             // clear variables
             isAnimating = false
@@ -285,34 +290,12 @@ open class SwiftyPageController: UIViewController {
             
             // logic for transition between child view controllers
             if let nextIndex = nextIndex {
-                if viewControllers[nextIndex] == toController {
+                if viewControllers[nextIndex] == (isCancelled ? fromController : toController) {
                     self.nextIndex = nil
                 } else {
                     transitionToIndex(index: nextIndex)
                 }
             }
-        }
-    }
-    
-    fileprivate func cancelTransition() {
-        if let toController = toControllerInteractive, let fromController = fromControllerInteractive {
-            // drop timer
-            timerForInteractiveTransition?.invalidate()
-            timerForInteractiveTransition = nil
-            
-            // remove toController from hierarchy
-            toController.view.removeFromSuperview()
-            toController.removeFromParentViewController()
-            
-            // change selectedIndex
-            selectedIndex = viewControllers.index(of: fromController)!
-            
-            // clear variables
-            isAnimating = false
-            toControllerInteractive = nil
-            fromControllerInteractive = nil
-            
-            animator.controller.didFinishAnimation(fromController: fromController, toController: toController)
         }
     }
     
@@ -343,9 +326,9 @@ open class SwiftyPageController: UIViewController {
             toController.view.layer.timeOffset = CFTimeInterval(timeOffset)
             fromController.view.layer.timeOffset = CFTimeInterval(timeOffset)
             if animator.controller.animationProgress >= 1.0 {
-                finishTransition()
+                finishTransition(isCancelled: false)
             } else if animator.controller.animationProgress <= 0.0 {
-                cancelTransition()
+                finishTransition(isCancelled: true)
             }
         }
     }
@@ -358,7 +341,7 @@ open class SwiftyPageController: UIViewController {
         self.delegate?.swiftyPageController(self, willMoveToController: viewControllers[index])
         let newController = viewControllers[index]
         let direction: AnimationDirection = index - selectedIndex! > 0 ? .left : .right
-        interactiveTransition(fromController: self.viewControllers[selectedIndex!], toController: newController, animationDirection: direction) // new
+        transition(fromController: viewControllers[selectedIndex!], toController: newController, animationDirection: direction)
     }
     
     fileprivate func selectController(atIndex index: Int) {
@@ -401,7 +384,7 @@ open class SwiftyPageController: UIViewController {
             selectController(atIndex: index)
         } else {
             if animated && isEnabledAnimation {
-                if isAnimating {
+                if isAnimating || interactiveTransitionInProgress {
                     nextIndex = index
                 } else {
                     transitionToIndex(index: index)
@@ -426,15 +409,15 @@ open class SwiftyPageController: UIViewController {
                     // select previous controller
                     let index = selectedIndex! - 1
                     if index >= 0 {
-                        interactiveTransitionInProgress = true
                         selectController(atIndex: index, animated: isEnabledAnimation)
+                        interactiveTransitionInProgress = true
                     }
                 } else {
                     // select next controller
                     let index = selectedIndex! + 1
                     if index <= viewControllers.count - 1 {
-                        interactiveTransitionInProgress = true
                         selectController(atIndex: index, animated: isEnabledAnimation)
+                        interactiveTransitionInProgress = true
                     }
                 }
             }
@@ -442,7 +425,7 @@ open class SwiftyPageController: UIViewController {
             // cancel transition in case of changing direction
             if (translation.x > 0 && animationDirectionInteractive != .right) || (translation.x < 0 && animationDirectionInteractive != .left) {
                 interactiveTransitionInProgress = false
-                cancelTransition()
+                finishTransition(isCancelled: true)
             }
             
             // set layer position
@@ -456,6 +439,8 @@ open class SwiftyPageController: UIViewController {
             toControllerInteractive?.view.layer.timeOffset = CFTimeInterval(timeOffset)
             fromControllerInteractive?.view.layer.timeOffset = CFTimeInterval(timeOffset)
         case .cancelled, .ended:
+            interactiveTransitionInProgress = false
+            
             if isAnimating {
                 return
             }
@@ -466,14 +451,15 @@ open class SwiftyPageController: UIViewController {
                 timerVelocity = 1.0
                 willFinishAnimationTransition = false
             } else {
-                if abs(velocity.x) > 32.0 {
+                let velocityTreshold: CGFloat = 32.0
+                if abs(velocity.x) > velocityTreshold {
                     timerVelocity = 2.0
                     willFinishAnimationTransition = true
                 } else {
                     timerVelocity = 1.0
                 }
             }
-            interactiveTransitionInProgress = false
+            
             if fromControllerInteractive != nil, toControllerInteractive != nil {
                 startTimerForInteractiveTransition()
             }
