@@ -143,7 +143,6 @@ open class SwiftyPageController: UIViewController {
     fileprivate var bottompContainerConstraint: NSLayoutConstraint!
     
     // interactive
-    
     fileprivate var timerForInteractiveTransition: Timer?
     fileprivate var interactiveTransitionInProgress = false
     fileprivate var toControllerInteractive: UIViewController?
@@ -230,7 +229,7 @@ open class SwiftyPageController: UIViewController {
         
         // setup frame
         toController.view.frame = containerView.bounds
-        containerView.addSubview(toController.view) // new line
+        containerView.addSubview(toController.view)
         
         // setup insets
         setupContentInsets(in: toController)
@@ -279,6 +278,7 @@ open class SwiftyPageController: UIViewController {
             isAnimating = false
             toControllerInteractive = nil
             fromControllerInteractive = nil
+            animator.controller.animationProgress = 0.0
             
             // call delegate 'didFinishAnimation' method
             animator.controller.didFinishAnimation(fromController: fromController, toController: toController)
@@ -456,6 +456,10 @@ open class SwiftyPageController: UIViewController {
             toControllerInteractive?.view.layer.timeOffset = CFTimeInterval(timeOffset)
             fromControllerInteractive?.view.layer.timeOffset = CFTimeInterval(timeOffset)
         case .cancelled, .ended:
+            if isAnimating {
+                return
+            }
+            
             // finish animation relatively velocity
             let velocity = sender.velocity(in: view)
             if animationDirectionInteractive == .left ? (velocity.x > 0) : (velocity.x < 0) {

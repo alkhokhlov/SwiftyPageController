@@ -40,20 +40,27 @@ class ViewController: UIViewController {
     }
     
     func segmentControlDidChange(_ sender: UISegmentedControl) {
+        // select needed controller
         containerController.selectController(atIndex: sender.selectedSegmentIndex, animated: true)
     }
     
     func setupContainerController(_ controller: SwiftyPageController) {
+        // assign variable
         containerController = controller
+        
+        // set delegate
         containerController.delegate = self
         
+        // set animation type
         containerController.animator = .parallax
-                
+        
+        // set view controllers
         let firstController = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "\(FirstViewController.self)")
         let secondController = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "\(SecondViewController.self)")
         let thirdController = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "\(ThirdViewController.self)")
         containerController.viewControllers = [firstController, secondController, thirdController]
         
+        // select needed controller
         containerController.selectController(atIndex: 0, animated: false)
     }
     
@@ -68,7 +75,7 @@ class ViewController: UIViewController {
 }
 ```
 
- - In ViewController where you added container controller implement delegate **SwiftyPageControllerDelegate**
+ - In _ViewController_ where you added container controller implement **SwiftyPageControllerDelegate**
 
 ```swift
 func swiftyPageController(_ controller: SwiftyPageController, alongSideTransitionToController toController: UIViewController) {
@@ -100,7 +107,7 @@ To choose animation use property
 public var animator: AnimatorType
 ```
 
-You can user three type of animation:
+You can use three types of animation:
  - default
  - parallax
  - custom

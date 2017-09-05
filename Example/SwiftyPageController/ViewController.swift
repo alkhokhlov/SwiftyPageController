@@ -21,20 +21,27 @@ class ViewController: UIViewController {
     }
     
     func segmentControlDidChange(_ sender: UISegmentedControl) {
+        // select needed controller
         containerController.selectController(atIndex: sender.selectedSegmentIndex, animated: true)
     }
     
     func setupContainerController(_ controller: SwiftyPageController) {
+        // assign variable
         containerController = controller
+        
+        // set delegate
         containerController.delegate = self
         
+        // set animation type
         containerController.animator = .parallax
-                
+        
+        // set view controllers
         let firstController = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "\(FirstViewController.self)")
         let secondController = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "\(SecondViewController.self)")
         let thirdController = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "\(ThirdViewController.self)")
         containerController.viewControllers = [firstController, secondController, thirdController]
         
+        // select needed controller
         containerController.selectController(atIndex: 0, animated: false)
     }
     

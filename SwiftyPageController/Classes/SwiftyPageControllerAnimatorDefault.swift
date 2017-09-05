@@ -43,7 +43,6 @@ open class SwiftyPageControllerAnimatorDefault: SwiftyPageControllerAnimatorProt
         let speed = panGesture.state != .changed ? animationSpeed : 0.0
         
         // position animation
-        
         let animationPositionToController = CABasicAnimation(keyPath: "position.x")
         animationPositionToController.duration = animationDuration
         animationPositionToController.fromValue = animationDirection == .left ? (toController.view.frame.width * 1.5) : (-toController.view.frame.width / 2.0)
@@ -59,7 +58,6 @@ open class SwiftyPageControllerAnimatorDefault: SwiftyPageControllerAnimatorProt
         fromController.view.layer.add(animationPositionFromController, forKey: fromControllerAnimationIdentifier)
         
         // set speed
-        
         toController.view.layer.speed = speed
         fromController.view.layer.speed = speed
     }
