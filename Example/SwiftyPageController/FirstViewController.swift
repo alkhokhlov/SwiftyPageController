@@ -8,7 +8,7 @@
 
 import UIKit
 
-class FirstViewController: UIViewController {
+final class FirstViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -33,8 +33,15 @@ class FirstViewController: UIViewController {
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         print("\(FirstViewController.self) view did disappear")
-    }    
+    }
 
+    @IBAction func buttonDidTap(_ sender: Any) {
+        let alertController = UIAlertController(title: "SwiftyPageController", message: "Show alert", preferredStyle: .alert)
+        let cancel = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+        alertController.addAction(cancel)
+        present(alertController, animated: true, completion: nil)
+    }
+    
     /*
     // MARK: - Navigation
 

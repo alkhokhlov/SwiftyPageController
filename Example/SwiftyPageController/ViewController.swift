@@ -9,7 +9,7 @@
 import UIKit
 import SwiftyPageController
 
-class ViewController: UIViewController {
+final class ViewController: UIViewController {
 
     @IBOutlet weak var segmentControl: UISegmentedControl!
     
@@ -20,7 +20,7 @@ class ViewController: UIViewController {
         segmentControl.addTarget(self, action: #selector(segmentControlDidChange(_:)), for: .valueChanged)
     }
     
-    func segmentControlDidChange(_ sender: UISegmentedControl) {
+    @objc func segmentControlDidChange(_ sender: UISegmentedControl) {
         // select needed controller
         containerController.selectController(atIndex: sender.selectedSegmentIndex, animated: true)
     }
@@ -39,7 +39,8 @@ class ViewController: UIViewController {
         let firstController = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "\(FirstViewController.self)")
         let secondController = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "\(SecondViewController.self)")
         let thirdController = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "\(ThirdViewController.self)")
-        containerController.viewControllers = [firstController, secondController, thirdController]
+        let tableController = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "\(TableViewController.self)")
+        containerController.viewControllers = [firstController, secondController, thirdController, tableController]
         
         // select needed controller
         containerController.selectController(atIndex: 0, animated: false)

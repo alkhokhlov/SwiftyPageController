@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'SwiftyPageController'
-  s.version          = '0.1.0'
+  s.version          = '0.1.1'
   s.summary          = 'SwiftyPageController will be helpful to use in many pages controller.'
   s.description      = 'SwiftyPageController is a full customizable pages controller
 
@@ -21,7 +21,7 @@ Advantages:
   s.author           = { 'alkhokhlov' => 'alkhokhlovv@gmail.com' }
   s.source           = { :git => 'https://github.com/alkhokhlov/SwiftyPageController.git', :tag => s.version.to_s }
 
-  s.ios.deployment_target = '9.0'
+  s.ios.deployment_target = '10.0'
 
   s.source_files = 'SwiftyPageController/Classes/**/*'
   

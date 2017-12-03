@@ -86,8 +86,10 @@ open class SwiftyPageController: UIViewController {
     
     public weak var delegate: SwiftyPageControllerDelegate?
     public private(set) var selectedIndex: Int?
-    public var panGesture: UIPanGestureRecognizer!
+    public var panGesture: UIPanGestureRecognizer?
+    public var permissibleRangeForHandlingPanFromSides: CGFloat = 25.0
     public var isEnabledAnimation = true
+    public var isEnabledInteractive = true
     public var animator: AnimatorType = .default
     public var containerPaddings: UIEdgeInsets? {
         didSet {
@@ -125,38 +127,37 @@ open class SwiftyPageController: UIViewController {
         }
     }
     
-    fileprivate var nextIndex: Int?
-    fileprivate var isAnimating = false
-    fileprivate var previousTopLayoutGuideLength: CGFloat!
+    private var nextIndex: Int?
+    private var isAnimating = false
     
-    fileprivate enum AnimatorControllers {
+    private enum AnimatorControllers {
         static var `default` = SwiftyPageControllerAnimatorDefault()
         static var parallax = SwiftyPageControllerAnimatorParallax()
         static var custom: SwiftyPageControllerAnimatorProtocol?
     }
     
     // container view
-    fileprivate var containerView = UIView(frame: CGRect.zero)
-    fileprivate var leadingContainerConstraint: NSLayoutConstraint!
-    fileprivate var trailingContainerConstraint: NSLayoutConstraint!
-    fileprivate var topContainerConstraint: NSLayoutConstraint!
-    fileprivate var bottompContainerConstraint: NSLayoutConstraint!
+    private var containerView = UIView(frame: CGRect.zero)
+    private var leadingContainerConstraint: NSLayoutConstraint!
+    private var trailingContainerConstraint: NSLayoutConstraint!
+    private var topContainerConstraint: NSLayoutConstraint!
+    private var bottompContainerConstraint: NSLayoutConstraint!
     
     // interactive
-    fileprivate var timerForInteractiveTransition: Timer?
-    fileprivate var interactiveTransitionInProgress = false
-    fileprivate var toControllerInteractive: UIViewController?
-    fileprivate var fromControllerInteractive: UIViewController?
-    fileprivate var animationDirectionInteractive: AnimationDirection!
-    fileprivate var willFinishAnimationTransition = true
-    fileprivate var timerVelocity = 1.0
-    
+    private var timerForInteractiveTransition: Timer?
+    private var interactiveTransitionInProgress = false
+    private var toControllerInteractive: UIViewController?
+    private var fromControllerInteractive: UIViewController?
+    private var animationDirectionInteractive: AnimationDirection!
+    private var willFinishAnimationTransition = true
+    private var timerVelocity = 1.0
+    private var startPoint: CGPoint?
     
     // MARK: - Life Cycle
     
     override open func viewDidLoad() {
         super.viewDidLoad()
-        setupController()
+        setupViewController()
     }
     
     open override func viewDidLayoutSubviews() {
@@ -166,10 +167,14 @@ open class SwiftyPageController: UIViewController {
     
     // MARK: - Setup
     
-    fileprivate func setupController() {
+    func setupPanGesture() {
         // setup pan gesture
         panGesture = UIPanGestureRecognizer(target: self, action: #selector(handlePanAction(_:)))
-        view.addGestureRecognizer(panGesture)
+        view.addGestureRecognizer(panGesture!)
+    }
+    
+    private func setupViewController() {
+        setupPanGesture()
         
         // setup container view
         containerView.translatesAutoresizingMaskIntoConstraints = false
@@ -187,42 +192,29 @@ open class SwiftyPageController: UIViewController {
         
         // select controller
         selectController(atIndex: selectedIndex ?? 0)
-        // assignment variable
-        previousTopLayoutGuideLength = topLayoutGuide.length
     }
     
-    fileprivate func setupContentInsets(in controller: UIViewController) {
+    private func setupContentInsets(in controller: UIViewController) {
         if controller.viewIfLoaded != nil {
             if let scrollView = controller.view.subviews.first as? UIScrollView {
-                customAdjustScrollViewInsets(in: scrollView, isAutomaticallyAdjustsScrollViewInsets: controller.automaticallyAdjustsScrollViewInsets)
+                customAdjustScrollViewInsets(in: scrollView)
             }
             if let scrollView = controller.view as? UIScrollView {
-                customAdjustScrollViewInsets(in: scrollView, isAutomaticallyAdjustsScrollViewInsets: controller.automaticallyAdjustsScrollViewInsets)
+                customAdjustScrollViewInsets(in: scrollView)
             }
         }
     }
     
     // MARK: - Actions
     
-    fileprivate func customAdjustScrollViewInsets(in scrollView: UIScrollView, isAutomaticallyAdjustsScrollViewInsets: Bool) {
+    private func customAdjustScrollViewInsets(in scrollView: UIScrollView) {
         if let containerInsets = containerInsets {
             scrollView.contentInset = containerInsets
             scrollView.scrollIndicatorInsets = scrollView.contentInset
-        } else if isAutomaticallyAdjustsScrollViewInsets {
-            scrollView.contentInset = UIEdgeInsets(top: topLayoutGuide.length, left: 0.0, bottom: bottomLayoutGuide.length, right: 0.0)
-            scrollView.scrollIndicatorInsets = scrollView.contentInset
         }
-        
-        // restore content offset
-        if abs(scrollView.contentOffset.y) == topLayoutGuide.length {
-            previousTopLayoutGuideLength = topLayoutGuide.length
-        }
-        
-        scrollView.contentOffset.y += previousTopLayoutGuideLength - topLayoutGuide.length
-        previousTopLayoutGuideLength = topLayoutGuide.length
     }
     
-    fileprivate func transition(fromController: UIViewController, toController: UIViewController, animationDirection: AnimationDirection) {
+    private func transition(fromController: UIViewController, toController: UIViewController, animationDirection: AnimationDirection) {
         if fromController == toController {
             return
         }
@@ -235,7 +227,9 @@ open class SwiftyPageController: UIViewController {
         setupContentInsets(in: toController)
         
         // setup animation
-        animator.controller.setupAnimation(fromController: fromController, toController: toController, panGesture: panGesture, animationDirection: animationDirection)
+        if let panGesture = panGesture {
+            animator.controller.setupAnimation(fromController: fromController, toController: toController, panGesture: panGesture, animationDirection: animationDirection)
+        }
         
         // call delegate 'willMoveToController' method
         delegate?.swiftyPageController(self, willMoveToController: toController)
@@ -245,8 +239,8 @@ open class SwiftyPageController: UIViewController {
         toControllerInteractive = toController
         animationDirectionInteractive = animationDirection
         
-        // handle end of transition in case no pan gesture
-        if panGesture.state != .changed {
+        // handle end of transition in case of no pan gesture
+        if let panGesture = panGesture, panGesture.state != .changed {
             willFinishAnimationTransition = true
             DispatchQueue.main.asyncAfter(deadline: .now() + animator.controller.animationDuration / Double(animator.controller.animationSpeed), execute: {
                 self.finishTransition(isCancelled: false)
@@ -254,8 +248,12 @@ open class SwiftyPageController: UIViewController {
         }
     }
     
-    fileprivate func finishTransition(isCancelled: Bool) {
+    private func finishTransition(isCancelled: Bool) {
         if let fromController = fromControllerInteractive, let toController = toControllerInteractive {
+            // make speed 1.0
+            toController.view.layer.speed = 1.0
+            fromController.view.layer.speed = 1.0
+            
             // drop timer
             timerForInteractiveTransition?.invalidate()
             timerForInteractiveTransition = nil
@@ -299,7 +297,7 @@ open class SwiftyPageController: UIViewController {
         }
     }
     
-    fileprivate func startTimerForInteractiveTransition() {
+    private func startTimerForInteractiveTransition() {
         isAnimating = true
         let timeInterval = 0.001
         
@@ -312,17 +310,17 @@ open class SwiftyPageController: UIViewController {
         timerForInteractiveTransition = Timer.scheduledTimer(timeInterval: timeInterval / timerVelocity, target: self, selector: #selector(finishAnimationTransition), userInfo: nil, repeats: true)
     }
     
-    func finishAnimationTransition() {
+    @objc func finishAnimationTransition() {
         if let fromController = fromControllerInteractive, let toController = toControllerInteractive {
             let timeOffset: Double = Double(animator.controller.animationProgress) * Double(animator.controller.animationDuration)
             let delta: Float = 0.002
-            
+
             if willFinishAnimationTransition {
                 animator.controller.animationProgress += delta
             } else {
                 animator.controller.animationProgress -= delta
             }
-            
+
             toController.view.layer.timeOffset = CFTimeInterval(timeOffset)
             fromController.view.layer.timeOffset = CFTimeInterval(timeOffset)
             if animator.controller.animationProgress >= 1.0 {
@@ -333,7 +331,7 @@ open class SwiftyPageController: UIViewController {
         }
     }
     
-    fileprivate func transitionToIndex(index: Int) {
+    private func transitionToIndex(index: Int) {
         if !isViewLoaded {
             return
         }
@@ -344,7 +342,7 @@ open class SwiftyPageController: UIViewController {
         transition(fromController: viewControllers[selectedIndex!], toController: newController, animationDirection: direction)
     }
     
-    fileprivate func selectController(atIndex index: Int) {
+    private func selectController(atIndex index: Int) {
         selectedIndex = index
         
         if !isViewLoaded {
@@ -395,8 +393,22 @@ open class SwiftyPageController: UIViewController {
         }
     }
     
-    func handlePanAction(_ sender: UIPanGestureRecognizer) {
+    @objc func handlePanAction(_ sender: UIPanGestureRecognizer) {
+        if !isEnabledInteractive {
+            return
+        }
+        
         let translation = sender.translation(in: view)
+        let touch = sender.location(in: view)
+        
+        // determine handle or not pan gesture
+        if startPoint == nil {
+            if touch.x > permissibleRangeForHandlingPanFromSides && touch.x < containerView.bounds.width - permissibleRangeForHandlingPanFromSides {
+                return
+            }
+            
+            startPoint = translation
+        }
         switch sender.state {
         case .changed:
             if isAnimating {
@@ -423,6 +435,9 @@ open class SwiftyPageController: UIViewController {
             }
             
             // cancel transition in case of changing direction
+            if animationDirectionInteractive == nil {
+                return
+            }
             if (translation.x > 0 && animationDirectionInteractive != .right) || (translation.x < 0 && animationDirectionInteractive != .left) {
                 interactiveTransitionInProgress = false
                 finishTransition(isCancelled: true)
@@ -433,12 +448,13 @@ open class SwiftyPageController: UIViewController {
             
             // interactive animation
             animator.controller.animationProgress = fmin(fmax(Float(abs(translation.x) / containerView.bounds.width), 0.0), 2.0)
-            
+
             willFinishAnimationTransition = animator.controller.animationProgress > 0.4
             let timeOffset = animator.controller.animationProgress * Float(animator.controller.animationDuration)
             toControllerInteractive?.view.layer.timeOffset = CFTimeInterval(timeOffset)
             fromControllerInteractive?.view.layer.timeOffset = CFTimeInterval(timeOffset)
         case .cancelled, .ended:
+            startPoint = nil
             interactiveTransitionInProgress = false
             
             if isAnimating {

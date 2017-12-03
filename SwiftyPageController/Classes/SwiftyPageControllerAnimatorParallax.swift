@@ -11,11 +11,11 @@ import UIKit
 
 open class SwiftyPageControllerAnimatorParallax: SwiftyPageControllerAnimatorProtocol {
     
-    fileprivate var _animationProgress: Float!
-    fileprivate var _animationSpeed: Float = 3.2
-    fileprivate var timer: Timer!
-    fileprivate var fromControllerAnimationIdentifier = "from.controller.animation.position.x"
-    fileprivate var toControllerAnimationIdentifier = "to.controller.animation.position.x"
+    private var _animationProgress: Float!
+    private var _animationSpeed: Float = 3.2
+    private var timer: Timer!
+    private var fromControllerAnimationIdentifier = "from.controller.animation.position.x"
+    private var toControllerAnimationIdentifier = "to.controller.animation.position.x"
     
     public var animationProgress: Float {
         get {
